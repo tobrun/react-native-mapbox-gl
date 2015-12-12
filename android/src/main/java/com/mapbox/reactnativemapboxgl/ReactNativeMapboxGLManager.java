@@ -3,21 +3,21 @@ package com.mapbox.reactnativemapboxgl;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.uimanager.ReactProp;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
-import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.mapbox.mapboxsdk.views.MapView;
 
 import javax.annotation.Nullable;
 
@@ -37,6 +37,8 @@ public class ReactNativeMapboxGLManager extends SimpleViewManager<MapView> {
     public static final String PROP_USER_TRACKING_MODE = "UserLocationTrackingMode";
     public static final String PROP_ZOOM_ENABLED = "zoomEnabled";
     public static final String PROP_ZOOM_LEVEL = "zoomLevel";
+    private MapView mapView;
+
 
     @Override
     public String getName() {
@@ -45,9 +47,9 @@ public class ReactNativeMapboxGLManager extends SimpleViewManager<MapView> {
 
     @Override
     public MapView createViewInstance(ThemedReactContext context) {
-        MapView mv = new MapView(context, "pk.foo");
-        mv.onCreate(null);
-        return mv;
+        mapView = new MapView(context, "pk.foo");
+        mapView.onCreate(null);
+        return mapView;
     }
 
     @ReactProp(name = PROP_ACCESS_TOKEN)
@@ -140,7 +142,7 @@ public class ReactNativeMapboxGLManager extends SimpleViewManager<MapView> {
         view.setDirection(value);
     }
 
-    @ReactProp(name = PROP_ONREGIONCHANGE, defaultBoolean=true)
+    @ReactProp(name = PROP_ONREGIONCHANGE, defaultBoolean = true)
     public void onMapChanged(final MapView view, Boolean value) {
         view.addOnMapChangedListener(new MapView.OnMapChangedListener() {
             @Override
@@ -165,7 +167,7 @@ public class ReactNativeMapboxGLManager extends SimpleViewManager<MapView> {
             double latitude = center.getDouble("latitude");
             double longitude = center.getDouble("longitude");
             view.setCenterCoordinate(new LatLng(latitude, longitude));
-        }else{
+        } else {
             Log.w(REACT_CLASS, "No CenterCoordinate provided");
         }
     }
@@ -184,7 +186,7 @@ public class ReactNativeMapboxGLManager extends SimpleViewManager<MapView> {
     public void setStyleUrl(MapView view, @Nullable String value) {
         if (value != null && !value.isEmpty()) {
             view.setStyleUrl(value);
-        }else{
+        } else {
             Log.w(REACT_CLASS, "No StyleUrl provided");
         }
     }
@@ -216,5 +218,9 @@ public class ReactNativeMapboxGLManager extends SimpleViewManager<MapView> {
     @ReactProp(name = PROP_SCROLL_ENABLED, defaultBoolean = true)
     public void setScrollEnabled(MapView view, Boolean value) {
         view.setScrollEnabled(value);
+    }
+
+    public MapView getMapView() {
+        return mapView;
     }
 }
